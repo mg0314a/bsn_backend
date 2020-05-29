@@ -1,0 +1,220 @@
+// 定义项目 API 的 proto 文件 可以同时描述 gRPC 和 HTTP API
+// protobuf 文件参考:
+//  - https://developers.google.com/protocol-buffers/
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+// package 命名使用 {appid}.{version} 的方式, version 形如 v1, v2 ..
+package demo.service.v1;
+
+// NOTE: 最后请删除这些无用的注释 (゜-゜)つロ
+
+option go_package = "api";
+option (gogoproto.goproto_getters_all) = false;
+
+service Demo {
+  rpc Ping(.google.protobuf.Empty) returns (.google.protobuf.Empty);
+  rpc SayHello(HelloReq) returns (.google.protobuf.Empty);
+
+  rpc InitContracts(.google.protobuf.Empty) returns (.google.protobuf.Empty);
+  rpc GetPrice(GetPriceRequest) returns (RspPrice) {option (google.api.http).get = "/price";};
+  rpc SetPrice(SetPriceRequest) returns (RspPrice) {option (google.api.http).post = "/price";};
+  rpc GetProducts(GetProductRequest) returns (RspProducts) {option (google.api.http).post = "/products";};
+  rpc ProductDetails(ProductDetailsRequest) returns (ProductResponse) {option (google.api.http).post = "/products/info";}
+  rpc RegisterProduct(RegisterProductRequest) returns (RespResult) {option (google.api.http).post = "/products/register";}
+
+  rpc MakeOrder(ReqMakeOrder) returns (RespMakeOrder) {option (google.api.http).post = "/order";}
+  rpc ConfirmOrder(ConfirmOrderRequest) returns (RespResult) {option (google.api.http).post = "/order/confirm";}
+  rpc CancelOrder(CancelOrderRequest) returns (RespResult) {option (google.api.http).post = "/order/cancel";}
+  rpc Mint(MintRequest) returns (RespResult) {option (google.api.http).post = "/funds/mint";}
+  rpc BalanceOf(ReqAccount) returns (RespBalance) {option (google.api.http).post = "/funds/balance";}
+
+  rpc RegisterMaterial(RegisterMaterialRequest) returns (RegisterMaterialResponse) {option (google.api.http).post = "/material/register";};
+  rpc GetMaterial(GetMaterialRequest) returns (GetMaterialResponse) {option (google.api.http).post = "/material";};
+  rpc ConsumeMaterial(ConsumeMaterialRequest) returns (ConsumeMaterialResponse) {option (google.api.http).post = "/material/consume";};
+
+  rpc GetOrders(ReqOrders) returns (RespOrders) {option (google.api.http).post = "/order/all";};
+  rpc GetOrder(ReqOrderID) returns (RespOrder) {option (google.api.http).post = "/order/info";}
+
+  rpc Trace(TraceRequest) returns (TraceResponse) {option (google.api.http).post = "/trace";}
+};
+
+message HelloReq {
+  string name = 1 [(gogoproto.moretags) = 'form:"name" validate:"required"'];
+}
+
+message GetPriceRequest {
+  string AuthName =1 [(gogoproto.jsontag) = 'auth_name'];
+  string Type = 2 [(gogoproto.jsontag) = 'type'];
+  bool IsMaterial = 3 [(gogoproto.jsontag) = 'is_material'];
+}
+
+message RspPrice {
+  repeated Price prices = 1 [(gogoproto.jsontag) = 'price'];
+}
+
+message SetPriceRequest {
+  string AuthName =1 [(gogoproto.jsontag) = 'auth_name'];
+  string Type = 2 [(gogoproto.jsontag) = 'type'];
+  int64 Price = 3 [(gogoproto.jsontag) = 'price'];
+  bool IsMaterial = 4 [(gogoproto.jsontag) = 'is_material'];
+}
+
+message Price {
+  string name = 1 [(gogoproto.jsontag) = 'name'];
+  string producer = 2 [(gogoproto.jsontag) = 'producer'];
+  int64 price = 3 [(gogoproto.jsontag) = 'price'];
+  bool isMaterial = 4 [(gogoproto.jsontag) = 'is_material'];
+}
+
+message RegisterMaterialRequest {
+  string AuthName =1 [(gogoproto.jsontag) = 'auth_name'];
+  string MaterialType = 2 [(gogoproto.jsontag) = 'material_type'];
+  string BatchID = 3 [(gogoproto.jsontag) = 'batch_id'];
+  int64 TotalNum = 4 [(gogoproto.jsontag) = 'total_num'];
+}
+
+message RegisterMaterialResponse {
+  string MaterialType = 1 [(gogoproto.jsontag) = 'material_type'];
+  string BatchID = 2 [(gogoproto.jsontag) = 'batch_id'];
+  string Producer = 3 [(gogoproto.jsontag) = 'producer'];
+  string CreatedAt = 4 [(gogoproto.jsontag) = 'created_at'];
+}
+
+message GetMaterialRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  string MaterialType = 2 [(gogoproto.jsontag) = 'material_type'];
+}
+
+message GetMaterialResponse {
+  int64  Number = 1 [(gogoproto.jsontag) = 'num'];
+}
+
+message ConsumeMaterialRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  string MaterialType = 2 [(gogoproto.jsontag) = 'material_type'];
+  int64 Count = 3 [(gogoproto.jsontag) = 'count'];
+}
+
+message ConsumeMaterialResponse {
+  string  RcptStatus = 1 [(gogoproto.jsontag) = 'receipt_status'];
+  string  RcptOutput = 2 [(gogoproto.jsontag) = 'receipt_output'];
+}
+
+message ReqNormal {
+  map<string, string> reqs = 1;
+}
+
+message RspProducts{
+  map<string, ProductResponse> products = 1;
+}
+
+message GetProductRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  string ProductType = 2 [(gogoproto.jsontag) = 'product_type'];
+}
+
+message ProductDetailsRequest {
+  string ProductID = 1 [(gogoproto.jsontag) = 'product_id'];
+}
+
+message ProductResponse {
+  string Owner = 1 [(gogoproto.jsontag) = 'owner'];
+  string Producer = 2 [(gogoproto.jsontag) = 'producer'];
+  int64 CreatedAt = 3 [(gogoproto.jsontag) = 'created_at'];
+  string Batch = 4 [(gogoproto.jsontag) = 'batch_id'];
+  repeated string MaterialBatches = 5 [(gogoproto.jsontag) = 'material_batches'];
+  bool IsSold = 6 [(gogoproto.jsontag) = 'is_sold'];
+}
+
+message RegisterProductRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  string Type = 2 [(gogoproto.jsontag) = 'type'];
+  string ProductID = 3 [(gogoproto.jsontag) = 'product_id'];
+  string Batch = 4 [(gogoproto.jsontag) = 'batch_id'];
+  repeated string MaterialBatches = 5 [(gogoproto.jsontag) = 'material_batches'];
+}
+
+message ReqMakeOrder {
+  string payer = 1;
+  string producer = 2;
+  bool is_material = 3;
+  string type = 4;
+  int64 price = 5;
+  int64 count = 6;
+}
+
+message RespMakeOrder {
+  string order_id = 1;
+}
+
+message ConfirmOrderRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  int64 order_id = 2  [(gogoproto.jsontag) = 'order_id'];
+}
+
+message CancelOrderRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  int64 order_id = 2 [(gogoproto.jsontag) = 'order_id'];
+}
+
+message RespResult {
+  bool IsSucceed = 1 [(gogoproto.jsontag) = 'is_succeed'];
+}
+
+message MintRequest {
+  string AuthName = 1 [(gogoproto.jsontag) = 'auth_name'];
+  string Account = 2 [(gogoproto.jsontag) = 'account'];
+  int64 Amount = 3 [(gogoproto.jsontag) = 'amount'];
+}
+
+message ReqAccount {
+  string account = 1;
+}
+
+message RespBalance {
+  string account = 1;
+  int64 balance = 2;
+}
+
+message ReqOrders {
+  string from = 1;
+}
+
+message Order {
+  int64 order_id = 1     [(gogoproto.jsontag) = 'order_id'];
+  string Payer = 2 [(gogoproto.jsontag) = 'payer'];
+  string Producer = 3 [(gogoproto.jsontag) = 'produce'];
+  int64 Amount = 4 [(gogoproto.jsontag) = 'amount'];
+  string OrderType = 5 [(gogoproto.jsontag) = 'order_type'];
+  int64 CreatedAt = 6 [(gogoproto.jsontag) = 'created_at'];
+  int32 Status = 7   [(gogoproto.jsontag) = 'status'];
+}
+
+message RespOrders {
+  repeated Order Orders  = 1;
+}
+
+message ReqOrderID {
+  int64 order_id = 1;
+}
+
+message RespOrder {
+  string payer = 1;
+  string producer = 2;
+  int64 amount = 3;
+  int64 count = 4;
+  string type = 5;
+  int32 status = 6;
+}
+
+message TraceRequest {
+  string material_batch = 1;
+}
+
+message TraceResponse {
+  repeated string product_ids = 1;
+}

@@ -1,0 +1,24 @@
+[Http]
+    Endpoint = "http://127.0.0.1:8545"
+[Channel]
+    CAFile = "../bsn/nodes/127.0.0.1/sdk/ca.crt"
+    CertFile = "../bsn/nodes/127.0.0.1/sdk/node.crt"
+    KeyFile = "../bsn/nodes/127.0.0.1/sdk/node.key"
+    Endpoint = "127.0.0.1:20200"
+
+[CtrAddrs]
+    product = "0x1E723b7ffe7137E8144284D886B33c2baD9Ce759"
+    payment = "0xB7A22F80f22304ad8d8d49C59Db34687E6105340"
+    material = "0x94F5ef41417916E1eF5c008D60507C458465AB0B"
+
+[Prikeys]
+    RootAdmin = "526ccb243b5e279a3ce30c08e4d091a0eb2c3bb5a700946d4da47b28df8fe6d5"
+    PdtAdmin = "7499b53affec1e5d31bf736bc30b2e39bcae6838047c662aa4df359cc6672416"
+    PayAdmin = "8b25edc8b392f134ee29c5442f34b039dbc7efb93bfbf8979438bd06ce60d5f1"
+    MtrAdmin = "3f4157a56042544439d7c3baa94594eec26bf3ee680f7351897fc017a68f80cc"
+    TV_PRODUCER = "7a8b52e315a5fd5c42e4f3ee0df141bee1b7298a939ffb78e40050ae833d8b84"
+    CPU_PRODUCER = "ea5917d4c7f289ce0fa590edd0e5bff3bd931649fcfc918e8a83b9ad879a31dc"
+    LCD_PRODUCER = "c29372135a5583e79f6c12893a96ce24060b6ecb3fbb7487dbea61d1df8b83a1"
+    AUDIO_PRODUCER = "3034b6f9ccdd446db372c9df92f082aca15ade1cbb5101eac0194dc7f5d306d3"
+    Custom = "a433631f4f9ac429ce74964ecec8632b3cdd6a6c51e66e1973d1542b5665042d"
+

@@ -1,0 +1,10 @@
+.idea
+.DS_Store
+
+*.bm.go
+*.pb.go
+*.bts.go
+*.cache.go
+*.swagger.json
+
+vendor
